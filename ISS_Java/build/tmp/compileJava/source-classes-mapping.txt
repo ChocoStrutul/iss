@@ -1,10 +1,44 @@
-MainFX.java
- MainFX
-controllers/LoginController.java
- controllers.LoginController
-controllers/BossController.java
- controllers.BossController
-Main.java
- Main
 controllers/EmployeeController.java
  controllers.EmployeeController
+utils/JdbcUtils.java
+ utils.JdbcUtils
+repository/LogRepository.java
+ repository.LogRepository
+model/UserType.java
+ model.UserType
+model/TaskType.java
+ model.TaskType
+repository/Repository.java
+ repository.Repository
+model/Boss.java
+ model.Boss
+repository/UserRepository.java
+ repository.UserRepository
+exceptions/ServiceException.java
+ exceptions.ServiceException
+model/User.java
+ model.User
+exceptions/RepoException.java
+ exceptions.RepoException
+repository/IUserRepository.java
+ repository.IUserRepository
+model/Entity.java
+ model.Entity
+Main.java
+ Main
+model/Employee.java
+ model.Employee
+model/Log.java
+ model.Log
+controllers/BossController.java
+ controllers.BossController
+service/Service.java
+ service.Service
+model/Task.java
+ model.Task
+repository/TaskRepository.java
+ repository.TaskRepository
+controllers/LoginController.java
+ controllers.LoginController
+MainFX.java
+ MainFX

@@ -6,21 +6,21 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.BossController">
    <children>
-      <TableView layoutX="14.0" layoutY="14.0" prefHeight="372.0" prefWidth="278.0">
+      <TableView fx:id="tableViewEmployees" layoutX="14.0" layoutY="14.0" onMouseClicked="#handleSelectionChangedEmployees" prefHeight="372.0" prefWidth="278.0">
         <columns>
-          <TableColumn prefWidth="182.60000610351562" text="Name" />
-          <TableColumn prefWidth="95.80001831054688" text="Arrival time" />
+          <TableColumn fx:id="columnEmployeeName" prefWidth="182.60000610351562" text="Name" />
+          <TableColumn fx:id="columnEmployeeArrivalTime" prefWidth="95.80001831054688" text="Arrival time" />
         </columns>
       </TableView>
       <AnchorPane layoutX="292.0" layoutY="14.0" prefHeight="372.0" prefWidth="295.0">
          <children>
-            <TextField editable="false" layoutX="105.0" layoutY="73.0" prefHeight="26.0" prefWidth="169.0" />
+            <TextField fx:id="textBoxEmployeeName" editable="false" layoutX="105.0" layoutY="73.0" prefHeight="26.0" prefWidth="169.0" />
             <Label layoutX="26.0" layoutY="78.0" text="Name:">
                <font>
                   <Font name="Arial Black" size="12.0" />
                </font>
             </Label>
-            <TextArea layoutX="105.0" layoutY="126.0" prefHeight="173.0" prefWidth="170.0" />
+            <TextArea fx:id="textAreaTaskDescription" layoutX="105.0" layoutY="126.0" prefHeight="173.0" prefWidth="170.0" />
             <Label layoutX="32.0" layoutY="136.0" text="Task:">
                <font>
                   <Font name="Arial Black" size="12.0" />
@@ -31,7 +31,7 @@
                   <Font name="Arial Black" size="22.0" />
                </font>
             </Label>
-            <Button layoutX="64.0" layoutY="333.0" mnemonicParsing="false" text="Send task">
+            <Button layoutX="64.0" layoutY="333.0" mnemonicParsing="false" onAction="#handleSendTaskButtonPressed" text="Send task">
                <font>
                   <Font name="Arial Black" size="12.0" />
                </font></Button>
@@ -39,6 +39,7 @@
                <font>
                   <Font name="Arial Black" size="12.0" />
                </font></Button>
+            <Label fx:id="labelTaskSendError" alignment="CENTER" layoutX="104.0" layoutY="310.0" prefHeight="18.0" prefWidth="170.0" textFill="RED" />
          </children></AnchorPane>
    </children>
 </AnchorPane>
