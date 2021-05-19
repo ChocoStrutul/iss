@@ -4,19 +4,29 @@ public class Task extends Entity<Long> {
 
     private String description;
     private TaskType type;
-    private Employee employee;
+    private User employee;
+    private String typeString;
 
-    public Task(Long id, String description, TaskType type, Employee employee) {
+    private Long uid;
+
+    public Task(Long id, String description, TaskType type, User employee) {
         setId(id);
         this.description = description;
         this.type = type;
         this.employee = employee;
+        this.typeString = type.toString();
+        this.uid = employee.getId();
     }
 
-    public Task(String description, TaskType type, Employee employee) {
+    public Task(String description, TaskType type, User employee) {
         this.description = description;
         this.type = type;
         this.employee = employee;
+        this.typeString = type.toString();
+        this.uid = employee.getId();
+    }
+
+    public Task() {
     }
 
     public String getDescription() {
@@ -35,11 +45,31 @@ public class Task extends Entity<Long> {
         this.type = type;
     }
 
-    public Employee getEmployee() {
+    public User getEmployee() {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
+    public void setEmployee(User employee) {
         this.employee = employee;
+    }
+
+    public String getTypeString() {
+        return typeString;
+    }
+
+    public void setTypeString(String typeString) {
+        this.typeString = typeString;
+        if(typeString.equals("PRIVATE"))
+            this.type = TaskType.PRIVATE;
+        else
+            this.type = TaskType.PUBLIC;
+    }
+
+    public Long getUid() {
+        return uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
     }
 }

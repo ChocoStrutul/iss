@@ -1,11 +1,15 @@
 package model;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 public class User extends Entity<Long>{
 
     private String email;
     private String password;
     private UserType type;
     private String name = null;
+    private String typeString;
 
     public User(Long uid, String email, String password, UserType type, String name) {
         setId(uid);
@@ -13,6 +17,10 @@ public class User extends Entity<Long>{
         this.password = password;
         this.type = type;
         this.name = name;
+        this.typeString = type.toString();
+    }
+
+    public User() {
     }
 
     public String getEmail() {
@@ -45,5 +53,17 @@ public class User extends Entity<Long>{
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getTypeString() {
+        return typeString;
+    }
+
+    public void setTypeString(String typeString) {
+        this.typeString = typeString;
+        if(typeString.equals("BOSS"))
+            this.type = UserType.BOSS;
+        else
+            this.type = UserType.EMPLOYEE;
     }
 }

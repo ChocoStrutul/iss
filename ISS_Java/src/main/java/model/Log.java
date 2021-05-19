@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 public class Log extends Entity<Long> {
 
     private String arrivalTime;
-    private Employee employee;
+    private User employee;
 
-    public Log(Long id, String arrivalTime, Employee employee) {
+    public Log(Long id, String arrivalTime, User employee) {
         setId(id);
         this.arrivalTime = arrivalTime;
         this.employee = employee;
     }
 
-    public Log(String arrivalTime, Employee employee) {
+    public Log(String arrivalTime, User employee) {
         this.arrivalTime = arrivalTime;
         this.employee = employee;
     }
@@ -30,11 +30,11 @@ public class Log extends Entity<Long> {
         this.arrivalTime = arrivalTime;
     }
 
-    public Employee getEmployee() {
+    public User getEmployee() {
         return employee;
     }
 
-    public void setEmployee(Employee employee) {
+    public void setEmployee(User employee) {
         this.employee = employee;
     }
 

@@ -9,6 +9,9 @@ public class Employee extends User {
         this.name = name;
     }
 
+    public Employee() {
+    }
+
     @Override
     public String toString() {
         return name;

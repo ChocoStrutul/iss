@@ -48,7 +48,7 @@ public class LoginController {
         }
 
         if (loggedInUser.getType().equals(UserType.BOSS))
-            initBossWindow((Boss) loggedInUser);
+            initBossWindow(loggedInUser);
         else {
             String arrivalTime = textBoxArrivalTime.getText();
             if (arrivalTime.equals("")) {
@@ -61,8 +61,12 @@ public class LoginController {
                 return;
             }
 
-                initEmployeeWindow((Employee) loggedInUser, arrivalTime);
+                initEmployeeWindow(loggedInUser, arrivalTime);
         }
+
+        textBoxEmail.setText("");
+        textBoxPassword.setText("");
+        textBoxArrivalTime.setText("");
 
     }
 
@@ -85,7 +89,7 @@ public class LoginController {
 
     }
 
-    private void initEmployeeWindow(Employee loggedInUser, String arrivalTime) throws IOException {
+    private void initEmployeeWindow(User loggedInUser, String arrivalTime) throws IOException {
 
         Log log = new Log(arrivalTime, loggedInUser);
         service.addLog(log);
@@ -103,7 +107,7 @@ public class LoginController {
 
     }
 
-    private void initBossWindow(Boss loggedInUser) throws IOException {
+    private void initBossWindow(User loggedInUser) throws IOException {
 
         Stage bStage = new Stage();
         FXMLLoader loader = new FXMLLoader();

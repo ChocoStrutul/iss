@@ -9,10 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-import model.Employee;
-import model.Log;
-import model.Task;
-import model.TaskType;
+import model.*;
 import service.Service;
 
 import java.util.stream.Collectors;
@@ -30,7 +27,7 @@ public class BossController {
     Stage stage;
     Service service;
 
-    Employee selectedEmployee = null;
+    User selectedEmployee = null;
 
     ObservableList<Log> modelLogs = FXCollections.observableArrayList();
 

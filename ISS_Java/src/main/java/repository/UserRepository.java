@@ -36,7 +36,7 @@ public class UserRepository implements IUserRepository {
                 String password = resultSet.getString("password");
                 String typeString = resultSet.getString("type");
                 UserType type;
-                if (typeString.equals("boss")) {
+                if (typeString.equals("BOSS")) {
                     type = UserType.BOSS;
                     user = new Boss(id, email, password, type);
                 }
