@@ -11,11 +11,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.*;
 import service.Service;
+import utils.observer.EventType;
+import utils.observer.Observer;
 
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class BossController {
+public class BossController implements Observer {
 
     public TableView<Log> tableViewEmployees;
     public TableColumn<Log, String> columnEmployeeName;
@@ -24,8 +26,8 @@ public class BossController {
     public Label labelTaskSendError;
     public TextField textBoxEmployeeName;
 
-    Stage stage;
-    Service service;
+    private Stage stage;
+    private Service service;
 
     User selectedEmployee = null;
 
@@ -35,6 +37,8 @@ public class BossController {
 
         this.stage = stage;
         this.service = service;
+
+        service.addObserver(this);
 
         setTableLogs();
 
@@ -92,4 +96,42 @@ public class BossController {
         selectedEmployee = log.getEmployee();
 
     }
+
+    public void handleLogout(ActionEvent actionEvent) {
+
+        service.removeObserver(this);
+        stage.close();
+
+    }
+
+    public void handlePostOnFeedButtonPressed(ActionEvent actionEvent) {
+
+        String taskDescription = textAreaTaskDescription.getText();
+
+        if(taskDescription.equals("")) {
+            labelTaskSendError.setText("Complete all task info");
+            return;
+        }
+
+        labelTaskSendError.setText("");
+
+        Task task = new Task(taskDescription, TaskType.PUBLIC);
+        service.postTaskOnFeed(task);
+
+        Alert a = new Alert(Alert.AlertType.INFORMATION, "Task posted on feed");
+        a.show();
+
+        textAreaTaskDescription.setText("");
+
+    }
+
+    @Override
+    public void update(EventType e) {
+
+        if (e.equals(EventType.LOGOUT) || e.equals(EventType.LOGIN)) {
+            setTableLogs();
+        }
+
+    }
+
 }

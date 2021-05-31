@@ -1,81 +1,89 @@
 package repository;
 
-import model.Employee;
+import exceptions.RepoException;
 import model.Log;
-import model.UserType;
-import utils.JdbcUtils;
+import model.Task;
+import model.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class LogRepository implements Repository<Long, Log> {
+public class LogRepository implements ILogRepository {
 
-    private JdbcUtils dbUtils;
+    private SessionFactory sessionFactory;
 
-    public LogRepository(Properties properties) {
-        dbUtils=new JdbcUtils(properties);
+    public LogRepository(Properties properties, SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Log getOne(Long aLong) {
-        return null;
+    public Log getOne(Long uid) {
+        Log log = null;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                log = session.createQuery("from Log where uid = " + uid, Log.class).getSingleResult();
+
+                tx.commit();
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
+
+        return log;
     }
 
     @Override
     public Iterable<Log> getAll() {
+        List<Log> logs = null;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                logs =
+                        session.createQuery("from Log", Log.class).list();
+                tx.commit();
 
+                logs.forEach(log -> {
 
-        Connection connection = dbUtils.getConnection();
-        List<Log> logs = new ArrayList<>();
+                    User user = session.createQuery("from User where id = " + log.getUid(), User.class).getSingleResult();
+                    log.setEmployee(user);
 
-        try(PreparedStatement statement = connection.prepareStatement("SELECT * FROM logs")) {
-            ResultSet resultSet = statement.executeQuery();
+                });
 
-            while(resultSet.next()) {
-
-                Long id = resultSet.getLong("id");
-                String arrivalTime = resultSet.getString("arrivalTime");
-                Long uid = resultSet.getLong("uid");
-                Employee employee = null;
-
-                try(PreparedStatement userStatement = connection.prepareStatement("SELECT * FROM users where id = ?")) {
-                    userStatement.setLong(1, uid);
-                    ResultSet usersResultSet = userStatement.executeQuery();
-
-                    if(usersResultSet.next()) {
-
-                        String email = usersResultSet.getString("email");
-                        String password = usersResultSet.getString("password");
-                        UserType type = UserType.EMPLOYEE;
-                        String name = usersResultSet.getString("name");
-                        employee = new Employee(id, email, password, type, name);
-                    }
-
-                } catch (SQLException ex) {
-                    System.err.println("DB Error " + ex);
-                }
-
-                Log log = new Log(id, arrivalTime, employee);
-                logs.add(log);
-
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
             }
-
-        } catch (SQLException ex) {
-            System.err.println("DB Error " + ex);
         }
 
         return logs;
-
     }
 
     @Override
-    public Log save(Log entity) {
-        return null;
+    public Log save(Log log) {
+
+        if(getOne(log.getUid()) != null)
+            throw new RepoException("User already logged in!");
+
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                session.save(log);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
+
+        return log;
     }
 
     @Override
@@ -86,5 +94,24 @@ public class LogRepository implements Repository<Long, Log> {
     @Override
     public Log update(Log entity) {
         return null;
+    }
+
+    @Override
+    public void logout(User employee) {
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+
+                Log log = session.createQuery("from Log where uid = " + employee.getId(), Log.class)
+                        .setMaxResults(1)
+                        .uniqueResult();
+                session.delete(log);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
     }
 }

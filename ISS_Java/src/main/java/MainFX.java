@@ -2,13 +2,8 @@ import controllers.LoginController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import model.Log;
-import model.Task;
-import model.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -27,8 +22,8 @@ public class MainFX extends Application {
     private Properties properties;
 
     IUserRepository userRepository;
-    Repository<Long, Log> logRepository;
-    Repository<Long, Task> taskRepository;
+    ILogRepository logRepository;
+    ITaskRepository taskRepository;
 
     Service service;
 
@@ -45,10 +40,11 @@ public class MainFX extends Application {
         initializeSessionFactory();
 
         //userRepository = new UserRepository(properties);
-        userRepository = new UserRepositoryHibernate(properties, sessionFactory);
-        logRepository = new LogRepository(properties);
+        userRepository = new UserRepository(properties, sessionFactory);
+        //logRepository = new LogRepository(properties);
+        logRepository = new LogRepository(properties, sessionFactory);
         //taskRepository = new TaskRepository(properties);
-        taskRepository = new TaskRepositoryHibernate(properties, sessionFactory);
+        taskRepository = new TaskRepository(properties, sessionFactory);
 
         service = new Service(userRepository, logRepository, taskRepository);
 

@@ -1,9 +1,16 @@
 package repository;
 
+import exceptions.RepoException;
 import model.Boss;
 import model.Employee;
 import model.User;
 import model.UserType;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import utils.JdbcUtils;
 
 import java.sql.Connection;
@@ -14,44 +21,15 @@ import java.util.Properties;
 
 public class UserRepository implements IUserRepository {
 
-    private JdbcUtils dbUtils;
+    private SessionFactory sessionFactory;
 
-    public UserRepository(Properties properties) {
-        dbUtils=new JdbcUtils(properties);
+    public UserRepository(Properties properties, SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
     public User getOne(Long id) {
-
-        Connection connection = dbUtils.getConnection();
-        User user = null;
-
-        try(PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE id = ?")) {
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-
-            if(resultSet.next()) {
-
-                String email = resultSet.getString("email");
-                String password = resultSet.getString("password");
-                String typeString = resultSet.getString("type");
-                UserType type;
-                if (typeString.equals("BOSS")) {
-                    type = UserType.BOSS;
-                    user = new Boss(id, email, password, type);
-                }
-                else {
-                    type = UserType.EMPLOYEE;
-                    String name = resultSet.getString("name");
-                    user = new Employee(id, email, password, type, name);
-                }
-            }
-
-        } catch (SQLException ex) {
-            System.err.println("DB Error " + ex);
-        }
-
-        return user;
+        return null;
     }
 
     @Override
@@ -76,34 +54,26 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public User login(String email, String password) {
-        Connection connection = dbUtils.getConnection();
+
         User user = null;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                user = session.createQuery("from User where email = '" + email + "' and password = '" + password + "'", User.class)
+                        .getSingleResult();
 
-        try(PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE email = ? and password = ?")) {
-            statement.setString(1, email);
-            statement.setString(2, password);
-            ResultSet resultSet = statement.executeQuery();
-
-            if(resultSet.next()) {
-
-                Long id = resultSet.getLong("id");
-                String typeString = resultSet.getString("type");
-                UserType type;
-                if (typeString.equals("boss")) {
-                    type = UserType.BOSS;
-                    user = new Boss(id, email, password, type);
-                }
-                else {
-                    type = UserType.EMPLOYEE;
-                    String name = resultSet.getString("name");
-                    user = new Employee(id, email, password, type, name);
-                }
+                tx.commit();
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
             }
-
-        } catch (SQLException ex) {
-            System.err.println("DB Error " + ex);
         }
 
+        if (user == null) {
+            throw new RepoException("Invalid email or password!");
+        }
         return user;
     }
 }
+

@@ -16,6 +16,7 @@
 
         <mapping resource="HBNEntities/User.hbm.xml"/>
         <mapping resource="HBNEntities/Task.hbm.xml"/>
+        <mapping resource="HBNEntities/Log.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

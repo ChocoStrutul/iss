@@ -1,5 +1,19 @@
-utils/JdbcUtils.java
- utils.JdbcUtils
+model/Boss.java
+ model.Boss
+model/UserType.java
+ model.UserType
+model/Log.java
+ model.Log
+exceptions/RepoException.java
+ exceptions.RepoException
+model/Entity.java
+ model.Entity
+controllers/LoginController.java
+ controllers.LoginController
+exceptions/ServiceException.java
+ exceptions.ServiceException
+repository/ITaskRepository.java
+ repository.ITaskRepository
 org/hibernate/dialect/SQLiteDialect.java
  org.hibernate.dialect.SQLiteDialect
  org.hibernate.dialect.SQLiteDialect$1
@@ -7,51 +21,43 @@ org/hibernate/dialect/SQLiteDialect.java
  org.hibernate.dialect.SQLiteDialect$3
  org.hibernate.dialect.SQLiteDialect$4
  org.hibernate.dialect.SQLiteDialect$SQLiteUniqueDelegate
-model/TaskType.java
- model.TaskType
-model/Entity.java
- model.Entity
-controllers/EmployeeController.java
- controllers.EmployeeController
-exceptions/ServiceException.java
- exceptions.ServiceException
-org/hibernate/dialect/identity/SQLiteDialectIdentityColumnSupport.java
- org.hibernate.dialect.identity.SQLiteDialectIdentityColumnSupport
-model/UserType.java
- model.UserType
+utils/observer/Observable.java
+ utils.observer.Observable
 repository/Repository.java
  repository.Repository
-repository/LogRepository.java
- repository.LogRepository
-exceptions/RepoException.java
- exceptions.RepoException
-model/Boss.java
- model.Boss
+controllers/BossController.java
+ controllers.BossController
+repository/ILogRepository.java
+ repository.ILogRepository
 model/User.java
  model.User
 repository/IUserRepository.java
  repository.IUserRepository
-repository/TaskRepository.java
- repository.TaskRepository
+utils/JdbcUtils.java
+ utils.JdbcUtils
+org/hibernate/dialect/identity/SQLiteDialectIdentityColumnSupport.java
+ org.hibernate.dialect.identity.SQLiteDialectIdentityColumnSupport
+utils/observer/EventType.java
+ utils.observer.EventType
 model/Employee.java
  model.Employee
-repository/UserRepository.java
- repository.UserRepository
-model/Log.java
- model.Log
-repository/UserRepositoryHibernate.java
- repository.UserRepositoryHibernate
-controllers/BossController.java
- controllers.BossController
-controllers/LoginController.java
- controllers.LoginController
+model/TaskType.java
+ model.TaskType
+utils/observer/Observer.java
+ utils.observer.Observer
 service/Service.java
  service.Service
 model/Task.java
  model.Task
-repository/TaskRepositoryHibernate.java
- repository.TaskRepositoryHibernate
+controllers/EmployeeController.java
+ controllers.EmployeeController
 Main.java
  Main
+repository/LogRepository.java
+ repository.LogRepository
+repository/TaskRepository.java
+ repository.TaskRepository
+repository/UserRepository.java
+ repository.UserRepository
 MainFX.java
  MainFX

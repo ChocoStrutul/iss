@@ -1,19 +1,28 @@
 package repository;
 
 import model.Task;
+import model.TaskType;
+import model.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import utils.JdbcUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
-public class TaskRepository implements Repository<Long, Task> {
+public class TaskRepository implements ITaskRepository {
 
-    private JdbcUtils dbUtils;
+    private SessionFactory sessionFactory;
 
-    public TaskRepository(Properties properties) {
-        dbUtils=new JdbcUtils(properties);
+    public TaskRepository(Properties properties, SessionFactory sessionFactory) {
+
+        this.sessionFactory = sessionFactory;
+
     }
 
     @Override
@@ -23,22 +32,50 @@ public class TaskRepository implements Repository<Long, Task> {
 
     @Override
     public Iterable<Task> getAll() {
-        return null;
+
+        List<Task> tasks = null;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                tasks =
+                        session.createQuery("from Task where typeString = 'PUBLIC'" , Task.class).list();
+                tx.commit();
+
+                tasks.forEach(task -> {
+
+                    if(task.getUid() != null) {
+
+                        User user = session.createQuery("from User where id = " + task.getUid(), User.class).getSingleResult();
+                        task.setEmployee(user);
+
+                    }
+
+                });
+
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
+
+        return tasks;
+
     }
 
     @Override
     public Task save(Task task) {
 
-        Connection connection = dbUtils.getConnection();
-
-        try (PreparedStatement statement = connection.prepareStatement("INSERT INTO tasks (description, type, uid) VALUES(?,?,?)")) {
-            statement.setString(1, task.getDescription());
-            statement.setString(2, task.getType().toString());
-            statement.setLong(3, task.getEmployee().getId());
-            statement.executeUpdate();
-
-        } catch (SQLException ex) {
-            System.err.println("DB Error " + ex);
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                session.save(task);
+                tx.commit();
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
         }
 
         return task;
@@ -50,7 +87,53 @@ public class TaskRepository implements Repository<Long, Task> {
     }
 
     @Override
-    public Task update(Task entity) {
-        return null;
+    public Task update(Task task) {
+
+        Task foundTask = null;
+        try(Session session = sessionFactory.openSession()){
+            Transaction tx=null;
+            try{
+
+                tx = session.beginTransaction();
+                foundTask = session.load( Task.class, task.getId());
+                foundTask.setUid(task.getUid());
+
+                tx.commit();
+
+            } catch(RuntimeException ex){
+                if (tx!=null)
+                    tx.rollback();
+            }
+        }
+
+        return foundTask;
+
     }
+
+    @Override
+    public Iterable<Task> getEmployeeTasks(User employee) {
+
+        List<Task> tasks = null;
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+                tasks =
+                        session.createQuery("from Task where uid = " + employee.getId(), Task.class).list();
+                tx.commit();
+
+                tasks.forEach(task -> {
+                    task.setEmployee(employee);
+                });
+
+            } catch (RuntimeException ex) {
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
+
+        return tasks;
+
+    }
+
 }

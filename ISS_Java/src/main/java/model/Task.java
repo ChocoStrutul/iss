@@ -26,6 +26,14 @@ public class Task extends Entity<Long> {
         this.uid = employee.getId();
     }
 
+    public Task(String description, TaskType type) {
+        this.description = description;
+        this.type = type;
+        this.typeString = type.toString();
+        this.employee = null;
+        this.uid = null;
+    }
+
     public Task() {
     }
 
@@ -71,5 +79,10 @@ public class Task extends Entity<Long> {
 
     public void setUid(Long uid) {
         this.uid = uid;
+    }
+
+    @Override
+    public String toString() {
+        return description;
     }
 }

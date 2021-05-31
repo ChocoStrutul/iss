@@ -1,21 +1,26 @@
 package model;
 
-import java.time.LocalDateTime;
-
 public class Log extends Entity<Long> {
 
     private String arrivalTime;
     private User employee;
 
+    private Long uid;
+
     public Log(Long id, String arrivalTime, User employee) {
         setId(id);
         this.arrivalTime = arrivalTime;
         this.employee = employee;
+        this.uid = employee.getId();
     }
 
     public Log(String arrivalTime, User employee) {
         this.arrivalTime = arrivalTime;
         this.employee = employee;
+        this.uid = employee.getId();
+    }
+
+    public Log() {
     }
 
     public Log(String arrivalTime) {
@@ -40,5 +45,13 @@ public class Log extends Entity<Long> {
 
     public String getEmployeeName() {
         return employee.getName();
+    }
+
+    public Long getUid() {
+        return uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
     }
 }

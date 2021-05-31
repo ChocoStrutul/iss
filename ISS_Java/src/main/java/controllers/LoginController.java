@@ -10,6 +10,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.*;
 import service.Service;
+import utils.observer.EventType;
+import utils.observer.Observer;
 
 import java.io.IOException;
 
@@ -42,26 +44,26 @@ public class LoginController {
         User loggedInUser;
         try {
             loggedInUser = service.login(email, password);
+
+            if (loggedInUser.getType().equals(UserType.BOSS))
+                initBossWindow(loggedInUser);
+            else {
+                String arrivalTime = textBoxArrivalTime.getText();
+                if (arrivalTime.equals("")) {
+                    labelLoginError.setText("Type arrival time!");
+                    return;
+                }
+
+                if (!validateTime(arrivalTime)) {
+                    labelLoginError.setText("Invalid arrival time!");
+                    return;
+                }
+
+                initEmployeeWindow(loggedInUser, arrivalTime);
+            }
         } catch (RepoException ex) {
             labelLoginError.setText(ex.getMessage());
             return;
-        }
-
-        if (loggedInUser.getType().equals(UserType.BOSS))
-            initBossWindow(loggedInUser);
-        else {
-            String arrivalTime = textBoxArrivalTime.getText();
-            if (arrivalTime.equals("")) {
-                labelLoginError.setText("Type arrival time!");
-                return;
-            }
-
-            if(!validateTime(arrivalTime)) {
-                labelLoginError.setText("Invalid arrival time!");
-                return;
-            }
-
-                initEmployeeWindow(loggedInUser, arrivalTime);
         }
 
         textBoxEmail.setText("");
@@ -92,6 +94,7 @@ public class LoginController {
     private void initEmployeeWindow(User loggedInUser, String arrivalTime) throws IOException {
 
         Log log = new Log(arrivalTime, loggedInUser);
+
         service.addLog(log);
 
         Stage eStage = new Stage();
@@ -99,8 +102,15 @@ public class LoginController {
         eLoader.setLocation(getClass().getResource("/view/employeeWindow.fxml"));
         AnchorPane eRoot=eLoader.load();
 
+        EmployeeController employeeController = eLoader.getController();
+        employeeController.setEnvironment(eStage, service, loggedInUser);
+
         eStage.setScene(new Scene(eRoot));
-        eStage.setTitle("Employee");
+        eStage.setTitle("Employee: " + loggedInUser.getName());
+
+        eStage.setOnCloseRequest(event -> {
+            employeeController.handleLogout(null);
+        });
 
         labelLoginError.setText("");
         eStage.show();
@@ -115,14 +125,18 @@ public class LoginController {
         AnchorPane bRoot=loader.load();
 
         BossController bossController = loader.getController();
-        bossController.setEnvironment(stage, service);
-
+        bossController.setEnvironment(bStage, service);
 
         bStage.setScene(new Scene(bRoot));
         bStage.setTitle("Boss");
+
+        bStage.setOnCloseRequest(event -> {
+            bossController.handleLogout(null);
+        });
 
         labelLoginError.setText("");
         bStage.show();
 
     }
+
 }
